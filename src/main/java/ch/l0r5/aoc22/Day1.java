@@ -5,10 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class Day1 {
@@ -19,7 +17,7 @@ public class Day1 {
   }
 
   static Day1 run() {
-    log.info("Running day 1...");
+    log.info("** Running day 1... **");
     return new Day1();
   }
 
@@ -28,8 +26,17 @@ public class Day1 {
     List<String> content = readFile();
     List<Integer> sums = getSums(content);
     int highestNumber = getHighest(sums);
+    log.info("** SOLUTION PART 1 **");
     log.info("The highest number is: {}", highestNumber);
-    log.info("Finished Day 1.");
+    List<Integer> highestThree = findTopK(sums, 3);
+    log.info("The highest three sums are: {}", highestThree.toString());
+    int getSumOfThree = highestThree
+      .stream()
+      .reduce(Integer::sum)
+      .get();
+    log.info("** SOLUTION PART 2 **");
+    log.info("The sum of the highest three is: {}", getSumOfThree);
+    log.info("** Finished Day 1. **");
   }
 
   private int getHighest(List<Integer> sums) {
@@ -65,5 +72,11 @@ public class Day1 {
       log.error(e.getMessage());
     }
     return content;
+  }
+
+  private List<Integer> findTopK(List<Integer> input, int k) {
+    Set<Integer> sortedSet = new TreeSet<>(Comparator.reverseOrder());
+    sortedSet.addAll(input);
+    return sortedSet.stream().limit(k).collect(Collectors.toList());
   }
 }
