@@ -27,17 +27,23 @@ public class Day2 {
     int sum = 0;
     for (String line : content) {
       String[] game = line.split(" ");
-      sum += calcPoints(game);
+      sum += calcPointsFirst(game);
     }
-
     log.info("** SOLUTION PART 1 **");
     log.info("Total points: {}", sum);
 
+    sum = 0;
+    for (String line : content) {
+      String[] game = line.split(" ");
+      sum += calcPointsSecond(game);
+    }
     log.info("** SOLUTION PART 2 **");
+    log.info("Total points: {}", sum);
+
     log.info("** Finished Day 2. **");
   }
 
-  private int calcPoints(String[] game) {
+  private int calcPointsFirst(String[] game) {
 //    rock      A X
 //    paper     B Y
 //    scissors  C Z
@@ -62,6 +68,39 @@ public class Day2 {
     int shapePoints = shapePointsTable.get(game[1]);
 
     return matchPoints + shapePoints;
+  }
+
+  private int calcPointsSecond(String[] game) {
+
+//    win      X
+//    draw     Y
+//    lose     Z
+    int win = 6;
+    int draw = 3;
+    int lose = 0;
+
+//    rock      A
+//    paper     B
+//    scissors  C
+    Map<String, Integer> shapePointsTable = Map.of("rock", 1, "paper", 2, "scissors", 3);
+    Map<String, Integer> matchPointsTable = Map.of(
+      "AX", lose + shapePointsTable.get("scissors"),
+      "BX", lose + shapePointsTable.get("rock"),
+      "CX", lose + shapePointsTable.get("paper"),
+      "AY", draw + shapePointsTable.get("rock"),
+      "BY", draw + shapePointsTable.get("paper"),
+      "CY", draw + shapePointsTable.get("scissors"),
+      "AZ", win + shapePointsTable.get("paper"),
+      "BZ", win + shapePointsTable.get("scissors"),
+      "CZ", win + shapePointsTable.get("rock")
+    );
+
+    String matchResult = Arrays.toString(game);
+    matchResult = matchResult.substring(1, matchResult.length() - 1).replace(",", "").replace(" ", "");
+
+    int matchPoints = matchPointsTable.get(matchResult);
+
+    return matchPoints;
   }
 
   private List<String> readFile() {
